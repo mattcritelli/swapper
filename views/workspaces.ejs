@@ -1,0 +1,17 @@
+<% include partials/header %>
+
+<h1>This is workspaces page!</h1>
+
+<% workspaces.forEach(function(workspace){ %>
+  <div>
+    <h4><%= workspace.name %> </h4>
+    <img src="<%= workspace.image %>" />
+  </div>
+<% }) %>
+
+
+
+
+
+
+<% include partials/footer %>
