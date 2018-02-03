@@ -6,9 +6,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 var workspaces = [
-  {name: 'Denver Apartment', image: "https://farm4.staticflickr.com/3146/2320148152_baee347d9f.jpg"},
+  {name: 'Denver Apartment', image: "https://odis.homeaway.com/odis/listing/a39a7c85-06a8-40c7-a5b2-f99175a7338e.c10.jpg"},
   {name: 'Denver Workshare Hot Seat', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-hot-seats.jpg?itok=RJeWaB0l"},
-  {name: 'NYC Workshare Dedicated Desk', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-dedicated-desks.jpg?itok=vlXvKyMH"}
+  {name: 'NYC Workshare Dedicated Desk', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-dedicated-desks.jpg?itok=vlXvKyMH"},
+  {name: 'Denver Apartment', image: "https://odis.homeaway.com/odis/listing/a39a7c85-06a8-40c7-a5b2-f99175a7338e.c10.jpg"},
+  {name: 'Denver Workshare Hot Seat', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-hot-seats.jpg?itok=RJeWaB0l"},
+  {name: 'NYC Workshare Dedicated Desk', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-dedicated-desks.jpg?itok=vlXvKyMH"},
+  {name: 'Denver Apartment', image: "https://odis.homeaway.com/odis/listing/a39a7c85-06a8-40c7-a5b2-f99175a7338e.c10.jpg"}
 ]
 
 app.get("/", function(req, res){
