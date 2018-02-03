@@ -1,0 +1,23 @@
+{
+  "name": "swapper",
+  "version": "1.0.0",
+  "description": "Swapper ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattcritelli/swapper.git"
+  },
+  "author": "Matt Critelli",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattcritelli/swapper/issues"
+  },
+  "homepage": "https://github.com/mattcritelli/swapper#readme",
+  "dependencies": {
+    "ejs": "^2.5.7",
+    "express": "^4.16.2"
+  }
+}
