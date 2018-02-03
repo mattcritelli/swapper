@@ -1,0 +1,13 @@
+<% include partials/header %>
+
+<h1>Add a workspace</h1>
+
+<form action="/workspaces" method="POST">
+  <input type="text" name="name" placeholder="name">
+  <input type="text" name="image" placeholder="url">
+  <button>Submit</button>
+</form>
+
+<a href="/workspaces">Go Back</a>
+
+<% include partials/footer %>
