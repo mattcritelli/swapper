@@ -1,38 +1,86 @@
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost/swapper");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-var workspaces = [
-  {name: 'Denver Apartment', image: "https://odis.homeaway.com/odis/listing/a39a7c85-06a8-40c7-a5b2-f99175a7338e.c10.jpg"},
-  {name: 'Denver Workshare Hot Seat', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-hot-seats.jpg?itok=RJeWaB0l"},
-  {name: 'NYC Workshare Dedicated Desk', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-dedicated-desks.jpg?itok=vlXvKyMH"},
-  {name: 'Denver Apartment', image: "https://odis.homeaway.com/odis/listing/a39a7c85-06a8-40c7-a5b2-f99175a7338e.c10.jpg"},
-  {name: 'Denver Workshare Hot Seat', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-hot-seats.jpg?itok=RJeWaB0l"},
-  {name: 'NYC Workshare Dedicated Desk', image: "https://www.modworks.com/sites/default/files/styles/horizontal_block_no_overlay/public/h_block/image/modworks-dedicated-desks.jpg?itok=vlXvKyMH"},
-  {name: 'Denver Apartment', image: "https://odis.homeaway.com/odis/listing/a39a7c85-06a8-40c7-a5b2-f99175a7338e.c10.jpg"}
-]
+//SCHEMA SETUP
+var workspaceSchema = new mongoose.Schema({
+  name: String,
+  image: String,
+  description: String
+})
+
+var Workspace = mongoose.model("Workspace", workspaceSchema)
+
+// Workspace.create({
+//   name: "Rome CoWorking Hot Desk",
+//   image: "https://s3-us-west-2.amazonaws.com/s3.sharedesk.net/workspaces/040d45ccc13c070fcec9d46ccd0cc543-medium.png",
+//   description: "Located in the city center. Friendly people. Great coffee and wifi!",
+// }, function(err, workspace){
+//   if(err){
+//     console.log("error", err)
+//   } else {
+//     console.log("\n workspace created:", workspace)
+//     res.redirect("/workspaces")
+//   }
+// })
 
 app.get("/", function(req, res){
   res.render("landing")
 });
 
 app.get("/workspaces", function(req,res){
-  res.render("workspaces", {"workspaces": workspaces});
+  Workspace.find({}, function(err, allWorkspaces){
+    if(err){
+      console.log("error", err)
+    } else {
+      // console.log("\n allWorkspacess found:", allWorkspaces)
+      res.render("index", {"workspaces": allWorkspaces});
+    }
+  })
 });
 
 app.post("/workspaces", function(req, res){
   var name = req.body.name
   var image = req.body.image
-  var newWorkspace = {name: name, image: image}
-  workspaces.push(newWorkspace)
-  res.redirect("/workspaces")
+  var description = req.body.description
+
+  Workspace.create({
+    name: name,
+    image: image,
+    description: description
+  }, function(err, workspace){
+    if(err){
+      console.log("error", err)
+    } else {
+      console.log("\n workspace created:", workspace)
+      res.redirect("/workspaces")
+    }
+  })
 });
 
 app.get("/workspaces/new", function(req, res){
   res.render("new")
+})
+
+app.get("/workspaces/:id", function(req, res){
+  var id = req.params.id
+  Workspace.findById(id, function(err, foundWorkspace){
+    if(err) {
+      console.log("Err in Workspace FindById", err)
+    } else {
+      // console.log("Found workspace", foundWorkspace)
+      res.render("show", {workspace: foundWorkspace})
+    }
+  })
+
+
+  // console.log("\n id:", id)
+  // console.log("\nworkspace:", workspace)
 })
 
 app.listen(3000, function(){
