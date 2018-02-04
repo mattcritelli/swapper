@@ -4,4 +4,12 @@
 <img src="<%= workspace.image %>" alt="Image of <%= workspace.name %>">
 <p><%= workspace.description %></p>
 
+<h2>Reviews:</h2>
+
+<% workspace.comments.forEach(function(comment){ %>
+  <p> <%= comment.text  %> -
+      <strong><%= comment.author  %></strong>
+  </p>
+<% }) %>
+
 <% include partials/footer %>
