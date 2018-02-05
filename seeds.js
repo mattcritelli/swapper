@@ -34,7 +34,7 @@ function seedDB(){
           if(err){
             console.log("error creating workspace:", workspace);
           } else {
-            console.log("\nSeed created:", workspace)
+            console.log("\nSeed created:")
             Review.create({
               text: "Cool space. Loved it! Can't wait to come back!",
               author: "Will"

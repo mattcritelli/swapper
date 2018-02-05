@@ -2,9 +2,12 @@ var express     = require("express"),
     app         = express(),
     bodyParser  = require("body-parser"),
     mongoose    = require("mongoose"),
+    passport    = require("passport"),
+    LocalStrategy = require("passport-local"),
     Workspace   = require("./models/workspace"),
     seedDB      = require("./seeds"),
-    Review      = require("./models/review")
+    Review      = require("./models/review"),
+    User        = require("./models/user")
 
 
 mongoose.connect("mongodb://localhost/swapper");
@@ -13,6 +16,20 @@ app.use(express.static(__dirname + "/public"))
 app.set("view engine", "ejs");
 seedDB();
 
+// ==== PASSPORT CONFIGURATION ====
+app.use(require("express-session")({
+  secret: "test secret for dev",
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+// ==== WORKSPACE ROUTES ====
 app.get("/", function(req, res){
   res.render("landing")
 });
@@ -66,8 +83,7 @@ app.get("/workspaces/:id", function(req, res){
             })
 })
 
-// COMMENT ROUTES
-
+// ==== COMMENT ROUTES ====
 app.get("/workspaces/:id/reviews/new", function(req, res){
   var id = req.params.id
 
@@ -103,9 +119,6 @@ app.post("/workspaces/:id/reviews", function(req, res){
     }
   })
 })
-
-
-
 
 
 

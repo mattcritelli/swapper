@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var reviewSchema = require("./review")
 
-var workspaceSchema = new mongoose.Schema({
+var WorkspaceSchema = new mongoose.Schema({
   name: String,
   image: String,
   description: String,
@@ -11,4 +11,4 @@ var workspaceSchema = new mongoose.Schema({
   }]
 })
 
-module.exports = mongoose.model("Workspace", workspaceSchema)
+module.exports = mongoose.model("Workspace", WorkspaceSchema)
