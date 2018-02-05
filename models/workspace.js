@@ -1,13 +1,13 @@
 var mongoose = require("mongoose");
-var commentSchema = require("./comment")
+var reviewSchema = require("./review")
 
 var workspaceSchema = new mongoose.Schema({
   name: String,
   image: String,
   description: String,
-  comments: [{
+  reviews: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Comment"
+    ref: "Review"
   }]
 })
 

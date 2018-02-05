@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 var Workspace = require("./models/workspace");
-var Comment = require("./models/comment")
+var Review = require("./models/review")
 
 var data = [
   {name: "Buenos Aires Home Office",
@@ -19,9 +19,9 @@ var data = [
 
 function seedDB(){
   // Remove all workspaces
-  Comment.remove({}, function(err){
+  Review.remove({}, function(err){
     if(err){
-      console.log("Error removing comments")
+      console.log("Error removing reviews")
     }
     Workspace.remove({}, function(err){
       if(err){
@@ -35,14 +35,14 @@ function seedDB(){
             console.log("error creating workspace:", workspace);
           } else {
             console.log("\nSeed created:", workspace)
-            Comment.create({
+            Review.create({
               text: "Cool space. Loved it! Can't wait to come back!",
               author: "Will"
-            }, function(err, comment){
+            }, function(err, review){
               if(err){
-                console.log('err from comment create in seedDb', err)
+                console.log('err from review create in seedDb', err)
               } else {
-                workspace.comments.push(comment);
+                workspace.reviews.push(review);
                 workspace.save();
               }
             })
