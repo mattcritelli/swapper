@@ -2,9 +2,12 @@ var express     = require("express"),
     app         = express(),
     bodyParser  = require("body-parser"),
     mongoose    = require("mongoose"),
+    passport    = require("passport"),
+    LocalStrategy = require("passport-local"),
     Workspace   = require("./models/workspace"),
     seedDB      = require("./seeds"),
-    Review      = require("./models/review")
+    Review      = require("./models/review"),
+    User        = require("./models/user")
 
 
 mongoose.connect("mongodb://localhost/swapper");
@@ -13,6 +16,27 @@ app.use(express.static(__dirname + "/public"))
 app.set("view engine", "ejs");
 seedDB();
 
+// ==== PASSPORT CONFIGURATION ====
+app.use(require("express-session")({
+  secret: "test secret for dev",
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// ==== ROUTE PROTECTION ====
+// Store currentUser on req.locals as local variable
+app.use(function(req, res, next){
+  res.locals.currentUser = req.user
+  next()
+})
+
+
+// ==== WORKSPACE ROUTES ====
 app.get("/", function(req, res){
   res.render("landing")
 });
@@ -22,7 +46,7 @@ app.get("/workspaces", function(req,res){
     if(err){
       console.log("error", err)
     } else {
-      res.render("workspaces/index", {workspaces});
+      res.render("workspaces/index", {workspaces, currentUser: req.user});
     }
   })
 });
@@ -66,9 +90,8 @@ app.get("/workspaces/:id", function(req, res){
             })
 })
 
-// COMMENT ROUTES
-
-app.get("/workspaces/:id/reviews/new", function(req, res){
+// ==== REVIEWS ROUTES ====
+app.get("/workspaces/:id/reviews/new", isLoggedIn, function(req, res){
   var id = req.params.id
 
   Workspace.findById({_id: id}, function(err, workspace){
@@ -80,7 +103,7 @@ app.get("/workspaces/:id/reviews/new", function(req, res){
   })
 })
 
-app.post("/workspaces/:id/reviews", function(req, res){
+app.post("/workspaces/:id/reviews", isLoggedIn, function(req, res){
   Workspace.findById({_id: req.params.id}, function(err, workspace){
     if(err){
       console.log("error finding workspace for review:", err)
@@ -103,6 +126,56 @@ app.post("/workspaces/:id/reviews", function(req, res){
     }
   })
 })
+
+// ==== AUTH ROUTES ====
+app.get("/register", function(req, res){
+  res.render("register")
+})
+
+app.post("/register", function(req, res){
+  var newUser = new User({username: req.body.username})
+  User.register(newUser,
+  req.body.password,
+  function(err, user){
+    if(err){
+      console.log("error registering new user", err)
+      return res.render("register")
+    } else {
+      console.log("user registration successful")
+      passport.authenticate("local")(req, res, function(){
+        res.redirect("/workspaces")
+      })
+    }
+  })
+})
+
+app.get("/login", function(req, res){
+  res.render("login")
+})
+
+app.post("/login",
+  passport.authenticate("local", {
+    successRedirect: '/workspaces',
+    failureRedirect: '/login'
+  }),
+  function(req, res){
+})
+
+app.get("/logout", function(req, res){
+  req.logout()
+  res.redirect("/")
+})
+
+// ==== CHECK IF USER IS LOGGED IN ====
+function isLoggedIn(req, res, next){
+  if(req.isAuthenticated()){
+    return next()
+  }
+  res.redirect("/login")
+}
+
+
+
 
 
 
