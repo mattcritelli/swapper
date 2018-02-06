@@ -6,10 +6,7 @@
     <div style="width: 30%; margin: 30px auto">
       <form action="/workspaces/<%=workspace._id%>/reviews" method="POST">
         <div class="form-group">
-          <input class="form-control" type="text" name="review[name]" placeholder="name">
-        </div>
-        <div class="form-group">
-          <textarea class="form-control" type="textarea" name="review[text]" placeholder="description"></textarea>
+          <textarea class="form-control" type="textarea" name="review" placeholder="description"></textarea>
         </div>
         <div class="form-group">
           <button class="btn btn-lg btn-primary btn-block">Submit</button>

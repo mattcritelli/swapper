@@ -27,7 +27,7 @@
         <% workspace.reviews.forEach(function(review){ %>
           <div class="row">
             <div class="col-md-12">
-              <strong><%=review.author%></strong>
+              <strong><%=review.author.username%></strong>
               <span class="pull-right">10 days ago</span>
               <p>
                 <%=review.text%>
