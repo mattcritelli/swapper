@@ -28,6 +28,13 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// ==== ROUTE PROTECTION ====
+// Store currentUser on req.locals as local variable
+app.use(function(req, res, next){
+  res.locals.currentUser = req.user
+  next()
+})
+
 
 // ==== WORKSPACE ROUTES ====
 app.get("/", function(req, res){
@@ -39,7 +46,7 @@ app.get("/workspaces", function(req,res){
     if(err){
       console.log("error", err)
     } else {
-      res.render("workspaces/index", {workspaces});
+      res.render("workspaces/index", {workspaces, currentUser: req.user});
     }
   })
 });
