@@ -23,17 +23,20 @@ router.post("/", isLoggedIn, function(req, res){
       console.log("error finding workspace for review:", err)
       res.redirect("/workspaces")
     } else {
-      Review.create({
-        text: req.body.review.text,
-        author: req.body.review.name
-      }, function(err, review){
+      Review.create({text: req.body.review}, function(err, review){
         if(err){
           console.log("error creating review:", err)
         } else {
           console.log("review created")
+          // add author id and username to review and save
+          review.author.id = req.user._id
+          review.author.username = req.user.username
+          review.save()
+          console.log("review:\n\n", review)
+          // push review into reviews and save workspace
+          // console.log("review saved")
           workspace.reviews.push(review)
           workspace.save();
-          console.log("review saved")
           res.redirect("/workspaces/" + workspace._id)
         }
       })

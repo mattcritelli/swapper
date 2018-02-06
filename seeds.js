@@ -28,27 +28,27 @@ function seedDB(){
         console.log('error in seedDB remove', err);
       }
       console.log("Removed all workspaces");
-      console.log("Seeding data...");
-      data.forEach(function(seed){
-        Workspace.create(seed, function(err, workspace){
-          if(err){
-            console.log("error creating workspace:", workspace);
-          } else {
-            console.log("\nSeed created:")
-            Review.create({
-              text: "Cool space. Loved it! Can't wait to come back!",
-              author: "Will"
-            }, function(err, review){
-              if(err){
-                console.log('err from review create in seedDb', err)
-              } else {
-                workspace.reviews.push(review);
-                workspace.save();
-              }
-            })
-          }
-        })
-      })
+      // console.log("Seeding data...");
+      // data.forEach(function(seed){
+      //   Workspace.create(seed, function(err, workspace){
+      //     if(err){
+      //       console.log("error creating workspace:", workspace);
+      //     } else {
+      //       console.log("\nSeed created:")
+      //       Review.create({
+      //         text: "Cool space. Loved it! Can't wait to come back!",
+      //         author: "Will"
+      //       }, function(err, review){
+      //         if(err){
+      //           console.log('err from review create in seedDb', err)
+      //         } else {
+      //           workspace.reviews.push(review);
+      //           workspace.save();
+      //         }
+      //       })
+      //     }
+      //   })
+      // })
     })
   })
 }
