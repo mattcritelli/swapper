@@ -22,6 +22,10 @@
           <div>
             <p><em>Submitted by: <%=workspace.user.username %></em></p>
           </div>
+          <a class="btn btn-warning" href="<%=workspace._id%>/edit">Edit Workspace</a>
+          <form id="delete-form" action="/workspaces/<%=workspace._id%>?_method=DELETE" method="POST">
+            <button class="btn btn-danger" href="<%=workspace._id%>">Delete Workspace</button>
+          </form>
         </div>
       </div>
       <div class="well">
@@ -44,7 +48,5 @@
     </div>
   </div>
 </div>
-
-
 
 <% include ../partials/footer %>

@@ -47,9 +47,7 @@ router.get("/new", isLoggedIn, function(req, res){
 
 // Show workspace
 router.get("/:id", function(req, res){
-  var id = req.params.id
-
-  Workspace.findById({_id: id}).
+  Workspace.findById(req.params.id).
             populate("reviews").
             exec(function(err, workspace){
               if(err) {
@@ -58,6 +56,47 @@ router.get("/:id", function(req, res){
                 res.render("workspaces/show", {workspace})
               }
             })
+})
+
+// Show workspace edit form
+router.get("/:id/edit", function(req, res){
+  Workspace.findById({_id: req.params.id}, function(err, workspace){
+    if(err){
+      console.log("error in workplace edit route")
+      res.redirect("/workspaces")
+    } else {
+      res.render("workspaces/edit", {workspace})
+    }
+  })
+})
+
+// Update workspace route
+router.put("/:id", function(req, res){
+  Workspace.findByIdAndUpdate(
+    req.params.id,
+    req.body.workspace,
+    function(err, updatedWorkspace){
+      if(err){
+        console.log("error updating workspace", err)
+        res.redirect("/workspaces/")
+      } else {
+        res.redirect("/workspaces/" + req.params.id)
+      }
+    }
+  )
+})
+
+// Delete a workspace
+router.delete("/:id", function(req, res){
+  Workspace.findByIdAndRemove(
+    req.params.id,
+    function(err){
+      if(err){
+        console.log("error deleting workspace", err)
+      }
+      res.redirect("/workspaces")
+    }
+  )
 })
 
 // ==== CHECK IF USER IS LOGGED IN ====

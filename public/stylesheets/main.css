@@ -9,3 +9,16 @@
 .thumbnail .caption-full {
   padding: 9px;
 }
+
+#delete-form {
+  display: inline;
+}
+
+.form-header {
+  text-align: center;
+}
+
+.form-center {
+  width: 30%;
+  margin: 30px auto
+}
