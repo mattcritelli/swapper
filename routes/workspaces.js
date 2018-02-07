@@ -16,20 +16,25 @@ router.get("/", function(req,res){
 });
 
 // Create new workspace
-router.post("/", function(req, res){
+router.post("/", isLoggedIn, function(req, res){
   var name = req.body.name
   var image = req.body.image
   var description = req.body.description
+  var user = {
+    id: req.user._id,
+    username: req.user.username
+  }
 
   Workspace.create({
     name: name,
     image: image,
-    description: description
+    description: description,
+    user: user
   }, function(err, workspace){
     if(err){
       console.log("error", err)
     } else {
-      console.log("\n workspace created:", workspace)
+      console.log("\n workspace saved:", workspace)
       res.redirect("/workspaces")
     }
   })
@@ -47,11 +52,9 @@ router.get("/:id", function(req, res){
   Workspace.findById({_id: id}).
             populate("reviews").
             exec(function(err, workspace){
-              console.log("outside foundWorkspace", workspace)
               if(err) {
                 console.log("Err in Workspace FindById", err)
               } else {
-                console.log("foundWorkspace", workspace)
                 res.render("workspaces/show", {workspace})
               }
             })

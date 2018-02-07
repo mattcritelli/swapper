@@ -32,9 +32,7 @@ router.post("/", isLoggedIn, function(req, res){
           review.author.id = req.user._id
           review.author.username = req.user.username
           review.save()
-          console.log("review:\n\n", review)
           // push review into reviews and save workspace
-          // console.log("review saved")
           workspace.reviews.push(review)
           workspace.save();
           res.redirect("/workspaces/" + workspace._id)
