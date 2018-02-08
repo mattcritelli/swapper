@@ -1,7 +1,8 @@
-var express = require("express")
-var router = express.Router()
+var express     = require("express")
+var router      = express.Router()
 var Workspace   = require("../models/workspace")
-var Review   = require("../models/review")
+var Review      = require("../models/review")
+var middleware  = require("../middleware")
 
 
 // List all workspaces
@@ -16,32 +17,28 @@ router.get("/", function(req,res){
 });
 
 // Create new workspace
-router.post("/", isLoggedIn, function(req, res){
-  var name = req.body.name
-  var image = req.body.image
-  var description = req.body.description
+router.post("/", middleware.isLoggedIn, function(req, res){
   var user = {
     id: req.user._id,
     username: req.user.username
   }
 
   Workspace.create({
-    name: name,
-    image: image,
-    description: description,
+    name: req.body.name,
+    image: req.body.image,
+    description: req.body.description,
     user: user
   }, function(err, workspace){
     if(err){
       console.log("error", err)
     } else {
-      console.log("\n workspace saved:", workspace)
       res.redirect("/workspaces")
     }
   })
 });
 
 // New workspace form
-router.get("/new", isLoggedIn, function(req, res){
+router.get("/new", middleware.isLoggedIn, function(req, res){
   res.render("workspaces/new")
 })
 
@@ -59,7 +56,7 @@ router.get("/:id", function(req, res){
 })
 
 // Show workspace edit form, error is handled in middleware
-router.get("/:id/edit", confirmWorkspaceOwner, function(req, res){
+router.get("/:id/edit", middleware.confirmWorkspaceOwner, function(req, res){
   Workspace.findById(req.params.id, function(err, workspace){
     res.render("workspaces/edit", {workspace})
   })
@@ -67,7 +64,7 @@ router.get("/:id/edit", confirmWorkspaceOwner, function(req, res){
 
 
 // Update workspace route
-router.put("/:id", confirmWorkspaceOwner, function(req, res){
+router.put("/:id", middleware.confirmWorkspaceOwner, function(req, res){
   Workspace.findByIdAndUpdate(
     req.params.id,
     req.body.workspace,
@@ -78,7 +75,7 @@ router.put("/:id", confirmWorkspaceOwner, function(req, res){
 })
 
 // Delete a workspace
-router.delete("/:id", confirmWorkspaceOwner, function(req, res){
+router.delete("/:id", middleware.confirmWorkspaceOwner, function(req, res){
   Workspace.findByIdAndRemove(
     req.params.id,
     function(err){
@@ -86,34 +83,5 @@ router.delete("/:id", confirmWorkspaceOwner, function(req, res){
     }
   )
 })
-
-// ==== CHECK IF USER IS LOGGED IN ====
-function isLoggedIn(req, res, next){
-  if(req.isAuthenticated()){
-    return next()
-  }
-  res.redirect("/login")
-}
-
-// ==== CHECK IF USER IS LOGGED IN ====
-
-function confirmWorkspaceOwner(req, res, next){
-  if(req.isAuthenticated()){
-    Workspace.findById(req.params.id, function(err, workspace){
-      if(err){
-        res.redirect("back")
-      } else {
-        if(workspace.user.id.equals(req.user._id)){
-          next();
-        } else {
-          res.redirect("back")
-        }
-      }
-    })
-  } else {
-    res.redirect("back")
-  }
-}
-
 
 module.exports = router

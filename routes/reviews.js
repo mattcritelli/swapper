@@ -1,10 +1,11 @@
-var express = require("express")
-var router = express.Router({mergeParams: true})
+var express     = require("express")
+var router      = express.Router({mergeParams: true})
 var Workspace   = require("../models/workspace")
-var Review   = require("../models/review")
+var Review      = require("../models/review")
+var middleware  = require("../middleware")
 
 // New review form
-router.get("/new", isLoggedIn, function(req, res){
+router.get("/new", middleware.isLoggedIn, function(req, res){
   var id = req.params.id
 
   Workspace.findById({_id: id}, function(err, workspace){
@@ -17,7 +18,7 @@ router.get("/new", isLoggedIn, function(req, res){
 })
 
 // Create review
-router.post("/", isLoggedIn, function(req, res){
+router.post("/", middleware.isLoggedIn, function(req, res){
   Workspace.findById({_id: req.params.id}, function(err, workspace){
     if(err){
       console.log("error finding workspace for review:", err)
@@ -43,7 +44,7 @@ router.post("/", isLoggedIn, function(req, res){
 })
 
 // Edit review
-router.get("/:review_id/edit", confirmReviewOwner, function(req, res){
+router.get("/:review_id/edit", middleware.confirmReviewOwner, function(req, res){
   Review.findById(req.params.review_id, function(err, review){
     console.log("review", review)
     res.render("reviews/edit", {review, workspace_id: req.params.id})
@@ -51,7 +52,7 @@ router.get("/:review_id/edit", confirmReviewOwner, function(req, res){
 })
 
 // Update review
-router.put("/:review_id", confirmReviewOwner, function(req, res){
+router.put("/:review_id", middleware.confirmReviewOwner, function(req, res){
   Review.findByIdAndUpdate(
     req.params.review_id,
     {text: req.body.text},
@@ -62,7 +63,7 @@ router.put("/:review_id", confirmReviewOwner, function(req, res){
 })
 
 // Delete review
-router.delete("/:review_id", confirmReviewOwner, function(req, res){
+router.delete("/:review_id", middleware.confirmReviewOwner, function(req, res){
   Review.findByIdAndRemove(
     req.params.review_id,
     function(err, deletedReview){
@@ -71,64 +72,4 @@ router.delete("/:review_id", confirmReviewOwner, function(req, res){
   )
 })
 
-
-// ==== CHECK IF USER IS LOGGED IN ====
-function isLoggedIn(req, res, next){
-  if(req.isAuthenticated()){
-    return next()
-  }
-  res.redirect("/login")
-}
-
-function confirmReviewOwner(req, res, next){
-  if(req.isAuthenticated()){
-    Review.findById(req.params.review_id,function(err, review){
-      if(err){
-        console.log("not authorized", err)
-        res.redirect("back")
-      } else {
-        if(review.author.id.equals(req.user._id)){
-          next();
-        }
-      }
-    })
-  } else {
-    res.redirect("back")
-  }
-}
-
 module.exports = router
-
-
-// // Edit review
-// router.get("/:review_id/edit", confirmReviewOwner, function(req, res){
-//   Review.findById(req.params.review_id, function(err, review){
-//     if(err){
-//       console.log("error in edit review route", err)
-//       res.redirect("back")
-//     } else {
-//       console.log("review", review)
-//       res.render("reviews/edit", {review, workspace_id: req.params.id})
-//     }
-//   })
-// })
-//
-// // Update review
-// router.put("/:review_id", confirmReviewOwner, function(req, res){
-//   Review.findByIdAndUpdate(
-//     req.params.review_id,
-//     {text: req.body.text},
-//     function(err, updatedReview){
-//       if(err){
-//         console.log("error is update review put route", err)
-//         res.redirect("back")
-//       } else {
-//         console.log("updatedReview?", updatedReview)
-//         res.redirect("/workspaces/" + req.params.id)
-//       }
-//     }
-//   )
-// })
-
-
-// <% if(currentUser && review.author.id.equals(req.user._id)){ %>
