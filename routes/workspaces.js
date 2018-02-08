@@ -58,42 +58,30 @@ router.get("/:id", function(req, res){
             })
 })
 
-// Show workspace edit form
-router.get("/:id/edit", function(req, res){
-  Workspace.findById({_id: req.params.id}, function(err, workspace){
-    if(err){
-      console.log("error in workplace edit route")
-      res.redirect("/workspaces")
-    } else {
-      res.render("workspaces/edit", {workspace})
-    }
+// Show workspace edit form, error is handled in middleware
+router.get("/:id/edit", confirmWorkspaceOwner, function(req, res){
+  Workspace.findById(req.params.id, function(err, workspace){
+    res.render("workspaces/edit", {workspace})
   })
 })
 
+
 // Update workspace route
-router.put("/:id", function(req, res){
+router.put("/:id", confirmWorkspaceOwner, function(req, res){
   Workspace.findByIdAndUpdate(
     req.params.id,
     req.body.workspace,
     function(err, updatedWorkspace){
-      if(err){
-        console.log("error updating workspace", err)
-        res.redirect("/workspaces/")
-      } else {
-        res.redirect("/workspaces/" + req.params.id)
-      }
+      res.redirect("/workspaces/" + req.params.id)
     }
   )
 })
 
 // Delete a workspace
-router.delete("/:id", function(req, res){
+router.delete("/:id", confirmWorkspaceOwner, function(req, res){
   Workspace.findByIdAndRemove(
     req.params.id,
     function(err){
-      if(err){
-        console.log("error deleting workspace", err)
-      }
       res.redirect("/workspaces")
     }
   )
@@ -106,5 +94,26 @@ function isLoggedIn(req, res, next){
   }
   res.redirect("/login")
 }
+
+// ==== CHECK IF USER IS LOGGED IN ====
+
+function confirmWorkspaceOwner(req, res, next){
+  if(req.isAuthenticated()){
+    Workspace.findById(req.params.id, function(err, workspace){
+      if(err){
+        res.redirect("back")
+      } else {
+        if(workspace.user.id.equals(req.user._id)){
+          next();
+        } else {
+          res.redirect("back")
+        }
+      }
+    })
+  } else {
+    res.redirect("back")
+  }
+}
+
 
 module.exports = router

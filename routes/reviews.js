@@ -42,6 +42,36 @@ router.post("/", isLoggedIn, function(req, res){
   })
 })
 
+// Edit review
+router.get("/:review_id/edit", confirmReviewOwner, function(req, res){
+  Review.findById(req.params.review_id, function(err, review){
+    console.log("review", review)
+    res.render("reviews/edit", {review, workspace_id: req.params.id})
+  })
+})
+
+// Update review
+router.put("/:review_id", confirmReviewOwner, function(req, res){
+  Review.findByIdAndUpdate(
+    req.params.review_id,
+    {text: req.body.text},
+    function(err, updatedReview){
+      res.redirect("/workspaces/" + req.params.id)
+    }
+  )
+})
+
+// Delete review
+router.delete("/:review_id", confirmReviewOwner, function(req, res){
+  Review.findByIdAndRemove(
+    req.params.review_id,
+    function(err, deletedReview){
+      res.redirect("back")
+    }
+  )
+})
+
+
 // ==== CHECK IF USER IS LOGGED IN ====
 function isLoggedIn(req, res, next){
   if(req.isAuthenticated()){
@@ -50,4 +80,55 @@ function isLoggedIn(req, res, next){
   res.redirect("/login")
 }
 
+function confirmReviewOwner(req, res, next){
+  if(req.isAuthenticated()){
+    Review.findById(req.params.review_id,function(err, review){
+      if(err){
+        console.log("not authorized", err)
+        res.redirect("back")
+      } else {
+        if(review.author.id.equals(req.user._id)){
+          next();
+        }
+      }
+    })
+  } else {
+    res.redirect("back")
+  }
+}
+
 module.exports = router
+
+
+// // Edit review
+// router.get("/:review_id/edit", confirmReviewOwner, function(req, res){
+//   Review.findById(req.params.review_id, function(err, review){
+//     if(err){
+//       console.log("error in edit review route", err)
+//       res.redirect("back")
+//     } else {
+//       console.log("review", review)
+//       res.render("reviews/edit", {review, workspace_id: req.params.id})
+//     }
+//   })
+// })
+//
+// // Update review
+// router.put("/:review_id", confirmReviewOwner, function(req, res){
+//   Review.findByIdAndUpdate(
+//     req.params.review_id,
+//     {text: req.body.text},
+//     function(err, updatedReview){
+//       if(err){
+//         console.log("error is update review put route", err)
+//         res.redirect("back")
+//       } else {
+//         console.log("updatedReview?", updatedReview)
+//         res.redirect("/workspaces/" + req.params.id)
+//       }
+//     }
+//   )
+// })
+
+
+// <% if(currentUser && review.author.id.equals(req.user._id)){ %>

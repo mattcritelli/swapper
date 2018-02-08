@@ -22,10 +22,12 @@
           <div>
             <p><em>Submitted by: <%=workspace.user.username %></em></p>
           </div>
-          <a class="btn btn-warning" href="<%=workspace._id%>/edit">Edit Workspace</a>
-          <form id="delete-form" action="/workspaces/<%=workspace._id%>?_method=DELETE" method="POST">
-            <button class="btn btn-danger" href="<%=workspace._id%>">Delete Workspace</button>
-          </form>
+          <% if(currentUser && workspace.user.id.equals(currentUser._id)){ %>
+            <a class="btn btn-warning btn-xs" href="<%=workspace._id%>/edit">Edit</a>
+            <form class="delete-form" action="/workspaces/<%=workspace._id%>?_method=DELETE" method="POST">
+              <button class="btn btn-danger btn-xs" href="<%=workspace._id%>">Delete</button>
+            </form>
+          <% } %>
         </div>
       </div>
       <div class="well">
@@ -41,6 +43,16 @@
               <p>
                 <%=review.text%>
               </p>
+              <% if(currentUser && review.author.id.equals(currentUser._id)){ %>
+                <a
+                href="/workspaces/<%=workspace._id%>/reviews/<%=review._id%>/edit"
+                class="btn btn-warning btn-xs">
+                Edit
+                </a>
+                <form class="delete-form" action="/workspaces/<%=workspace._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                <button class="btn btn-danger btn-xs">Delete</button>
+                </form>
+              <% } %>
             </div>
           </div>
         <% }) %>
