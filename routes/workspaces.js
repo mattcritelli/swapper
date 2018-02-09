@@ -32,6 +32,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
     if(err){
       console.log("error", err)
     } else {
+      req.flash("success", "You have successfully added a workspace!")
       res.redirect("/workspaces")
     }
   })
@@ -47,8 +48,9 @@ router.get("/:id", function(req, res){
   Workspace.findById(req.params.id).
             populate("reviews").
             exec(function(err, workspace){
-              if(err) {
-                console.log("Err in Workspace FindById", err)
+              if(err || !workspace) {
+                req.flash("error", "Cannot find workspace")
+                res.redirect("back")
               } else {
                 res.render("workspaces/show", {workspace})
               }
@@ -69,6 +71,7 @@ router.put("/:id", middleware.confirmWorkspaceOwner, function(req, res){
     req.params.id,
     req.body.workspace,
     function(err, updatedWorkspace){
+      req.flash("success", "You have successfully updated your workspace")
       res.redirect("/workspaces/" + req.params.id)
     }
   )
@@ -79,6 +82,7 @@ router.delete("/:id", middleware.confirmWorkspaceOwner, function(req, res){
   Workspace.findByIdAndRemove(
     req.params.id,
     function(err){
+      req.flash("success", "You have successfully deleted your workspace")
       res.redirect("/workspaces")
     }
   )
