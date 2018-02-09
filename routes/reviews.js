@@ -6,11 +6,10 @@ var middleware  = require("../middleware")
 
 // New review form
 router.get("/new", middleware.isLoggedIn, function(req, res){
-  var id = req.params.id
-
-  Workspace.findById({_id: id}, function(err, workspace){
+  Workspace.findById(req.params.id, function(err, workspace){
     if(err){
       console.log("error finding workspace for new review")
+      res.redirect("back")
     } else {
       res.render("reviews/new", {workspace})
     }
@@ -19,7 +18,7 @@ router.get("/new", middleware.isLoggedIn, function(req, res){
 
 // Create review
 router.post("/", middleware.isLoggedIn, function(req, res){
-  Workspace.findById({_id: req.params.id}, function(err, workspace){
+  Workspace.findById(req.params.id, function(err, workspace){
     if(err){
       console.log("error finding workspace for review:", err)
       res.redirect("/workspaces")
@@ -27,6 +26,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
       Review.create({text: req.body.review}, function(err, review){
         if(err){
           console.log("error creating review:", err)
+          res.redirect("back")
         } else {
           console.log("review created")
           // add author id and username to review and save
@@ -36,6 +36,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
           // push review into reviews and save workspace
           workspace.reviews.push(review)
           workspace.save();
+          req.flash("success", "You have successfully added a review!")
           res.redirect("/workspaces/" + workspace._id)
         }
       })
@@ -45,9 +46,14 @@ router.post("/", middleware.isLoggedIn, function(req, res){
 
 // Edit review
 router.get("/:review_id/edit", middleware.confirmReviewOwner, function(req, res){
-  Review.findById(req.params.review_id, function(err, review){
-    console.log("review", review)
-    res.render("reviews/edit", {review, workspace_id: req.params.id})
+  Workspace.findById(req.params.id, function(err, workspace){
+    if(err || !workspace){
+      req.flash("error", "Workspace not found")
+      return res.redirect("back")
+    }
+    Review.findById(req.params.review_id, function(err, review){
+      res.render("reviews/edit", {review, workspace_id: req.params.id})
+    })
   })
 })
 
@@ -57,6 +63,7 @@ router.put("/:review_id", middleware.confirmReviewOwner, function(req, res){
     req.params.review_id,
     {text: req.body.text},
     function(err, updatedReview){
+      req.flash("success", "You have successfully updated your review!")
       res.redirect("/workspaces/" + req.params.id)
     }
   )
@@ -67,6 +74,7 @@ router.delete("/:review_id", middleware.confirmReviewOwner, function(req, res){
   Review.findByIdAndRemove(
     req.params.review_id,
     function(err, deletedReview){
+      req.flash("success", "You have successfully deleted your review!")
       res.redirect("back")
     }
   )
