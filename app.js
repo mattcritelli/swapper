@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 var express     = require("express"),
     app         = express(),
     bodyParser  = require("body-parser"),
@@ -16,7 +18,13 @@ var workspaceRoutes = require("./routes/workspaces"),
     reviewRoutes    = require("./routes/reviews"),
     indexRoutes     = require("./routes/index")
 
-mongoose.connect("mongodb://localhost/swapper");
+// mongoose.connect("mongodb://localhost/swapper");
+mongoose.connect("mongodb://"
+                + process.env.MLAB_USER
+                + ":"
+                + process.env.MLAB_PASSWORD
+                + "@ds233218.mlab.com:33218/swapper"
+              );
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
