@@ -29,7 +29,7 @@ var url = process.env.MLAB_URL || process.env.LOCAL_DATABASE
 console.log("URL?", url)
 
 // mongoose.connect(process.env.LOCAL_DATABASE);
-mongoose.connect(process.env.MLAB_URI);
+mongoose.connect(process.env.MLAB_URL);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
