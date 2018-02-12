@@ -1,8 +1,40 @@
-<% include partials/header %>
-<h1>Landing Page</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Swapper</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/landing.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript" async></script>
+  </head>
+  <body>
 
-<p>Welcome to Swapper!</p>
+    <div class="container">
+      <% if(error && error.length > 0 ){ %>
+        <div class="alert alert-danger" role="alert">
+          <%= error %>
+        </div>
+      <% } %>
+      <% if(success && success.length > 0) { %>
+        <div class="alert alert-success" role="alert">
+          <%= success %>
+        </div>
+      <% } %>
+    </div>
 
-<a href="/workspaces">View all workspaces</a>
+    <div id="landing-header">
+      <h1>Find & Share Workspaces  From Around The World</h1>
+      <a href="/workspaces" class="btn btn-lg btn-success">View All Workspaces</a>
+    </div>
+
+    <ul class="slideshow">
+      <li><p>Apartment Home Office in Melbourne, Australia</p></li>
+      <li><p>Downtown Co-working Hotseats in Buenos Aires, Argentina</p></li>
+      <li><p>Rustic Home Garden Workspace in Swindon, England</p></li>
+      <li><p>Wrap Around Window Co-working Space in Florence, Italy</p></li>
+      <li><p>Balcony Workspace in Nha Trang, Vietnam</p></li>
+    </ul>
 
 <% include partials/footer %>
