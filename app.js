@@ -24,7 +24,11 @@ var workspaceRoutes = require("./routes/workspaces"),
 //   password: process.env.MLAB_PASSWORD
 // })
 
-// mongoose.connect("mongodb://localhost/swapper");
+var url = process.env.MLAB_URL || process.env.LOCAL_DATABASE
+
+console.log("URL?", url)
+
+// mongoose.connect(process.env.LOCAL_DATABASE);
 mongoose.connect(process.env.MLAB_URI);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
