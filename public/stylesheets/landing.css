@@ -1,0 +1,112 @@
+body {
+  background-color: #000;
+}
+
+#landing-header {
+  background-color: #000;
+  border-radius: 10px;
+  opacity: 0.9;
+  z-index: 1;
+  width: 500px;
+  height: 200px;
+  padding: 20px;
+  text-align: center;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  margin: -70px 0 0 -270px;
+}
+
+#landing-header h1 {
+  color: #fff;
+}
+
+/* Slideshow animations */
+.slideshow {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.slideshow li {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-size: cover;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  z-index: 0;
+  animation: imageAnimation 50s linear infinite;
+}
+
+.slideshow li:nth-child(1) {
+  background-image: url(/images/apartment_office.jpg);
+}
+
+.slideshow li:nth-child(2) {
+  background-image: url(/images/coworking_tables.jpg);
+  animation-delay: 10s;
+}
+
+.slideshow li:nth-child(3) {
+  background-image: url(/images/england_garden.jpg);
+  animation-delay: 20s;
+}
+
+.slideshow li:nth-child(4) {
+  background-image: url(/images/coworking_windows.jpg);
+  animation-delay: 30s;
+}
+
+.slideshow li:nth-child(5) {
+  background-image: url(/images/vietnam_balcony.jpg);
+  animation-delay: 40s;
+}
+
+@keyframes imageAnimation {
+  0% {
+    opacity: 0;
+    animation-timing-function: ease-in;
+  }
+  10% {
+    opacity: 1;
+    animation-timing-function: ease-out;
+  }
+  20% {
+    opacity: 1;
+  }
+  30%{
+    opacity: 0;
+  }
+}
+
+/* Caption animations */
+.slideshow p {
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.5em;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
+  padding: 1.2em;
+  background-color: #000;
+  opacity: 0.9;
+  z-index: 1;
+}
+
+
+/* Older browser support - .no-cssanimations class added by modernizr */
+.no-cssanimations .slideshow li {
+	opacity: 1;
+}
