@@ -3,6 +3,7 @@ require('dotenv').config()
 var express     = require("express"),
     app         = express(),
     bodyParser  = require("body-parser"),
+    aws         = require('aws-sdk'),
     mongoose    = require("mongoose"),
     passport    = require("passport"),
     flash       = require("connect-flash")
@@ -17,6 +18,11 @@ var express     = require("express"),
 var workspaceRoutes = require("./routes/workspaces"),
     reviewRoutes    = require("./routes/reviews"),
     indexRoutes     = require("./routes/index")
+
+// var mLab = new aws.mLab({
+//   username: process.env.MLAB_USER,
+//   password: process.env.MLAB_PASSWORD
+// })
 
 // mongoose.connect("mongodb://localhost/swapper");
 mongoose.connect("mongodb://"
